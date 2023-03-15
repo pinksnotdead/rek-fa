@@ -11,6 +11,7 @@
 
 namespace App\Entity;
 
+use App\Component\LoyaltyPoints\Calculator\LoyaltyPointsCalculator;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -62,6 +63,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(type: Types::JSON)]
     private array $roles = [];
+
+    #[ORM\Column(length: 10, options: ['default' => 'default'])]
+    private ?string $pricingPlan = null;
 
     public function getId(): ?int
     {
@@ -177,5 +181,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // add $this->salt too if you don't use Bcrypt or Argon2i
         [$this->id, $this->username, $this->password] = $data;
+    }
+
+    public function getPricingPlan(): ?string
+    {
+        return $this->pricingPlan;
+    }
+
+    public function setPricingPlan(string $pricingPlan): self
+    {
+        $this->pricingPlan = in_array($pricingPlan, LoyaltyPointsCalculator::$pricingPlans) ? $pricingPlan : LoyaltyPointsCalculator::$pricingPlans[0];
+
+        return $this;
     }
 }
