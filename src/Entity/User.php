@@ -11,6 +11,7 @@
 
 namespace App\Entity;
 
+use App\Component\LoyaltyPoints\Calculator\LoyaltyPointsCalculator;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,11 +35,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    static private $pricingPlans = [
-        'default',
-        'premium'
-    ];
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
@@ -194,7 +190,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setPricingPlan(string $pricingPlan): self
     {
-        $this->pricingPlan = in_array($pricingPlan, self::$pricingPlans) ? $pricingPlan : self::$pricingPlans[0];
+        $this->pricingPlan = in_array($pricingPlan, LoyaltyPointsCalculator::$pricingPlans) ? $pricingPlan : LoyaltyPointsCalculator::$pricingPlans[0];
 
         return $this;
     }
