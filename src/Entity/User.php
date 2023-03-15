@@ -34,6 +34,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    static private $pricingPlans = [
+        'default',
+        'premium'
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
@@ -62,6 +67,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(type: Types::JSON)]
     private array $roles = [];
+
+    #[ORM\Column(length: 10, options: ['default' => 'default'])]
+    private ?string $pricingPlan = null;
 
     public function getId(): ?int
     {
@@ -177,5 +185,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // add $this->salt too if you don't use Bcrypt or Argon2i
         [$this->id, $this->username, $this->password] = $data;
+    }
+
+    public function getPricingPlan(): ?string
+    {
+        return $this->pricingPlan;
+    }
+
+    public function setPricingPlan(string $pricingPlan): self
+    {
+        $this->pricingPlan = in_array($pricingPlan, self::$pricingPlans) ? $pricingPlan : self::$pricingPlans[0];
+
+        return $this;
     }
 }
