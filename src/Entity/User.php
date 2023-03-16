@@ -54,15 +54,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 10, max: 20)]
     private ?string $password = null;
 
     /**
      * @var string[]
      */
     #[ORM\Column(type: Types::JSON)]
-    private array $roles = [];
+    private array $roles = ['ROLE_USER'];
 
     #[ORM\Column(length: 10, options: ['default' => 'default'])]
     private ?string $pricingPlan = null;
@@ -112,7 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(?string $password): void
     {
         $this->password = $password;
     }

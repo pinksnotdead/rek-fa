@@ -6,13 +6,16 @@
     <h1>{{ 'action.register'|trans }}</h1>
 
     {{ form_start(registrationForm) }}
+        {{form_errors(registrationForm)}}
         {{ form_row(registrationForm.fullName) }}
         {{ form_row(registrationForm.email) }}
         {{ form_row(registrationForm.username) }}
         {{ form_row(registrationForm.plainPassword, {
             label: 'Password'
         }) }}
+        {{ form_row(registrationForm.pricingPlan) }}
 
-        <button type="submit" class="btn">{{ 'action.register'|trans }}</button>
+
+    <button type="submit" class="btn">{{ 'action.register'|trans }}</button>
     {{ form_end(registrationForm) }}
 {% endblock %}
