@@ -11,9 +11,11 @@
 
 namespace App\Entity;
 
+use App\Component\LoyaltyPoints\Calculator\LoyaltyPointsCalculator;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,6 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'symfony_demo_user')]
+#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -57,7 +60,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string[]
      */
     #[ORM\Column(type: Types::JSON)]
-    private array $roles = [];
+    private array $roles = ['ROLE_USER'];
+
+    #[ORM\Column(length: 10, options: ['default' => 'default'])]
+    private ?string $pricingPlan = null;
 
     public function getId(): ?int
     {
@@ -104,7 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(?string $password): void
     {
         $this->password = $password;
     }
@@ -173,5 +179,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // add $this->salt too if you don't use Bcrypt or Argon2i
         [$this->id, $this->username, $this->password] = $data;
+    }
+
+    public function getPricingPlan(): ?string
+    {
+        return $this->pricingPlan;
+    }
+
+    public function setPricingPlan(string $pricingPlan): self
+    {
+        $this->pricingPlan = in_array($pricingPlan, LoyaltyPointsCalculator::$pricingPlans) ? $pricingPlan : LoyaltyPointsCalculator::$pricingPlans[0];
+
+        return $this;
     }
 }

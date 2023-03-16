@@ -30,6 +30,10 @@
                 <source>comment.is_spam</source>
                 <target>Twój komentarz został uznany za spam.</target>
             </trans-unit>
+            <trans-unit id="action.register">
+                <source>action.register</source>
+                <target>Zarejestruj się</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
